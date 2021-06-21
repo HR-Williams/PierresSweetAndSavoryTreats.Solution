@@ -6,32 +6,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PierresSweetAndSavoryTreats.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace PierresSweetAndSavoryTreats.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly PierresSweetAndSavoryTreatsContext _db;
+        public HomeController(PierresSweetAndSavoryTreatsContext db)
         {
-            _logger = logger;
+        _db = db;
         }
-
-        public IActionResult Index()
+        [HttpGet("/")]
+        public ActionResult Index()
         {
-            return View();
-        }
+        List<Flavor> flavors = _db.Flavors.ToList();
+        List<Treat> treats = _db.Treats.ToList();
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        ViewBag.Treats = treats;
+        return View(flavors);
         }
     }
 }
